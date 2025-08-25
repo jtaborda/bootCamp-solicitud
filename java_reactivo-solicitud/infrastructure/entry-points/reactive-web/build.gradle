@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':usecase')
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'jakarta.persistence:jakarta.persistence-api'
+    implementation 'org.postgresql:r2dbc-postgresql'
+    implementation 'org.reactivecommons.utils:object-mapper-api:0.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.reactivecommons.utils:object-mapper:0.1.0'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation files('C:\\Users\\jptaborda\\Desktop\\Curso Aws\\bootCampS1-1.0\\java_reactivo\\infrastructure\\driven-adapters\\r2dbc-postgresql\\build\\libs\\infractura-1.0.0.jar')
+    implementation files('C:\\Users\\jptaborda\\Desktop\\Curso Aws\\bootCampS1-1.0\\java_reactivo\\domain\\model\\build\\libs\\domain-1.0.0.jar')
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+}
