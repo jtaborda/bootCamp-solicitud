@@ -6,11 +6,11 @@ import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
 @RequiredArgsConstructor
-public class SolicitudUseCase {
+public class SolicitudUseCase
+{
     private final SolicitudRepository solicitudRepository;
-
+//aqyui validaciones
     public Mono<Void> saveSolicitud(Solicitud solicitud)
     {
         return solicitudRepository.saveSolicitud(solicitud)

@@ -35,7 +35,8 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
 
         this.estadoRepository = estadoRepository1;
     }
-
+//valdiacion usercase
+    //
     @Override
     public Mono<Solicitud> saveSolicitud(Solicitud solicitud) {
         return tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
@@ -53,7 +54,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                             solicitud.getPlazo(),
                                             solicitud.getTipoPrestamo(),
                                             1L
-                                    );
+                                    );//
 
                                     return repository.save(entity)
                                             .map(e -> new Solicitud(

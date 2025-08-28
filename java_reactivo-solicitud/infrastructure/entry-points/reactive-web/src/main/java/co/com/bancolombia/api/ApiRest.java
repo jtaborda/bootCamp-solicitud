@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import co.com.bancolombia.usecase.solicitud.SolicitudUseCase;
 
-@Tag(name = "Usuarios", description = "API para manejo de usuarios")
+@Tag(name = "Solicittud", description = "API para manejo de las solicitudes ")
 @RestController
 @RequestMapping(value = "/api/v1/solicitud", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
