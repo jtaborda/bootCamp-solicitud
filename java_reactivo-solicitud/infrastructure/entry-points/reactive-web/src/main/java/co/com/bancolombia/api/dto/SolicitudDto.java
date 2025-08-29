@@ -8,6 +8,10 @@ public record SolicitudDto(
          Long tipoPrestamo,
          String nombreTipoPrestamo,
          Long idEstado,
-         String nombreEstado
+         String nombreEstado,
+         String correo,
+         String nombre,
+         Long  tasa_interes,
+         Long  salario_base
 ) {
 }

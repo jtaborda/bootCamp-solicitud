@@ -16,4 +16,8 @@ public class tipoPrestamoEntity {
     @Id
     private Long id_tipo_prestamos;
     private String nombre_tipo ;
+    private Long monto_minimo;
+    private Long monto_maximo;
+    private Long tasa_interes;
+    private Long valdiacion_automatica;
 }

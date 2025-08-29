@@ -1,6 +1,7 @@
 package co.com.bancolombia.r2dbc;
 
 import co.com.bancolombia.model.estadosolicitud.gateways.EstadoSolicitudRepository;
+import co.com.bancolombia.model.paginado.Paginado;
 import co.com.bancolombia.model.solicitud.Solicitud;
 import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import co.com.bancolombia.model.tipoprestamo.gateways.TipoPrestamoRepository;
@@ -57,7 +58,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                     solicitud.getDocumento(),
                                     e.getMonto(),
                                     e.getPlazo(),
-                                    e.getId_tipo_prestamos()
+                                    e.getIdTipoPrestamos()
                             ));
                 });
     }
@@ -70,21 +71,50 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                 .flatMap(entity ->
                         usuarioRepository.getUsuarioPorID(entity.getUsuario_id())
                                 .flatMap(user ->
-                                        tipoPrestamoRepository.getTipoPrstamo(entity.getId_tipo_prestamos())
+                                        tipoPrestamoRepository.getTipoPrstamo(entity.getIdTipoPrestamos())
                                                 .flatMap(tipo ->
-                                                        estadoRepository.getEstadoSolicitud(entity.getId_estado())
+                                                        estadoRepository.getEstadoSolicitud(entity.getIdEstado())
                                                 .map( estado-> new Solicitud(
                                                         user.getDocumento(),
                                                         entity.getMonto(),
                                                         entity.getPlazo(),
-                                                        entity.getId_tipo_prestamos(),
+                                                        entity.getIdTipoPrestamos(),
                                                         tipo.getNombre_tipo(),
                                                         estado.getId_estado(),
-                                                        estado.getNombre_estado()
+                                                        estado.getNombre_estado(),
+                                                        user.getCorreo(),
+                                                        user.getNombre(),
+                                                        tipo.getTasa_interes(),
+                                                        user.getSalario()
                                                 ))
                                 )
                 )
          );
     }
-
+    @Override
+    public Flux<Solicitud> getFiltros(Long estadoId) {
+        return repository.findByIdEstado(estadoId)
+                .flatMap(entity ->
+                        usuarioRepository.getUsuarioPorID(entity.getUsuario_id())
+                                .flatMap(user ->
+                                        tipoPrestamoRepository.getTipoPrstamo(entity.getIdTipoPrestamos())
+                                                .flatMap(tipo ->
+                                                        estadoRepository.getEstadoSolicitud(entity.getIdEstado())
+                                                                .map( estado-> new Solicitud(
+                                                                        user.getDocumento(),
+                                                                        entity.getMonto(),
+                                                                        entity.getPlazo(),
+                                                                        entity.getIdTipoPrestamos(),
+                                                                        tipo.getNombre_tipo(),
+                                                                        estado.getId_estado(),
+                                                                        estado.getNombre_estado(),
+                                                                        user.getCorreo(),
+                                                                        user.getNombre(),
+                                                                        tipo.getTasa_interes(),
+                                                                        user.getSalario()
+                                                                ))
+                                                )
+                                )
+                );
+    }
 }

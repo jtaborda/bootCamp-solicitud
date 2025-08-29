@@ -1,8 +1,10 @@
 package co.com.bancolombia.usecase.solicitud;
 
+
 import co.com.bancolombia.model.estadosolicitud.gateways.EstadoSolicitudRepository;
 import co.com.bancolombia.model.exception.TipoPrestamoNotFoundException;
 import co.com.bancolombia.model.exception.UserNotFoundException;
+import co.com.bancolombia.model.paginado.Paginado;
 import co.com.bancolombia.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.bancolombia.model.usuario.gateways.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ public class SolicitudUseCase
     private final SolicitudRepository solicitudRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
     private final UsuarioRepository usuarioRepository;
-
+    private final EstadoSolicitudRepository estadoSolicitudRepository;
 
 public Mono<Void> saveSolicitud(Solicitud solicitud) {
     return tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
@@ -35,5 +37,26 @@ public Mono<Void> saveSolicitud(Solicitud solicitud) {
     {
         return solicitudRepository.getAllSolicitud();
     }
+
+    public Flux<Solicitud> getFiltroSolicitud(Paginado paginado)
+    {
+        long page = (paginado.getPage() != null && paginado.getPage() >= 0) ? paginado.getPage() : 0L;
+        long size = (paginado.getSize() != null && paginado.getSize() > 0) ? paginado.getSize() : 10L;
+
+
+        if (paginado.getEstado() == null) {
+            return Flux.error(new IllegalArgumentException("El tipo de estado es obligatorio"));
+        }
+        return estadoSolicitudRepository.getEstadoSolicitud(paginado.getEstado())
+                .switchIfEmpty(Mono.error(new TipoPrestamoNotFoundException("Estado no encontrado")))
+                .thenMany(
+                        solicitudRepository.getFiltros(paginado.getEstado())
+                                .skip(page * size)
+                                .take(size)
+                );
+
+    }
+
+
 
 }

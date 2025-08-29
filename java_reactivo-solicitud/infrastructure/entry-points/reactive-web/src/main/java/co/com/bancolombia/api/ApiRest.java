@@ -1,10 +1,14 @@
 package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.CreateSolictudDto;
+import co.com.bancolombia.api.dto.PaginaDto;
 import co.com.bancolombia.api.dto.SolicitudDto;
 import co.com.bancolombia.api.mapper.SolicitudDTOMapper;
+import co.com.bancolombia.model.solicitud.Solicitud;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +39,23 @@ public class ApiRest {
         return solicitudUseCase.saveSolicitud(solicitudDTOMapper.toModel(createSolictudDto))
                 .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()));
     }
-    @Operation(summary = "Obtener todos los usuarios")
+    @Operation(summary = "Obtener Todas las Solicitudes")
     @GetMapping
     public Flux<SolicitudDto> getAllSolicitud() {
-        logger.info("***************************");
-        logger.info("Trayendo las solicitudes");
-        logger.info("*****************************");
+        logger.info("***************************"); logger.info("Trayendo las solicitudes"); logger.info("*****************************");
         return solicitudUseCase.getAllSolicitud()
                 .map(solicitudDTOMapper::toResponse);
     }
+
+
+
+    @GetMapping("/paginado")
+    public Flux<SolicitudDto> getAllSolicitudPaged(@RequestBody PaginaDto paginaDto) {
+        logger.info("***************************"); logger.info("Trayendo las solicitudes"); logger.info("*****************************");
+        return solicitudUseCase.getFiltroSolicitud(solicitudDTOMapper.toModel(paginaDto))
+                .map(solicitudDTOMapper::toResponse);
+    }
+
+
+
 }

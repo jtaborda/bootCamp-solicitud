@@ -1,5 +1,6 @@
 package co.com.bancolombia.r2dbc.entity;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ public class solicitudEntity {
     private Long usuario_id ;
     private Long monto ;
     private Long plazo ;
-    private Long id_tipo_prestamos;
-    private Long id_estado;
+    @Column(name = "id_tipo_prestamos")
+    private Long idTipoPrestamos;
+    @Column(name = "id_estado")
+    private Long idEstado;
 }
