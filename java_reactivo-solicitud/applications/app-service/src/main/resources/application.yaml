@@ -1,15 +1,43 @@
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: miPassword
-
+    url: "r2dbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "miPassword"
   sql:
     init:
-      mode: always
-      platform: postgres
+      mode: "always"
+      platform: "postgres"
 logging:
   level:
-    root=INFO:
+    root=INFO: null
 server:
   port: 9090
+adapter:
+  restconsumer:
+    timeout: 5000
+    url: "http://localhost:8080"
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+resilience4j:
+  circuitbreaker:
+    instances:
+      testGet:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"
+      testPost:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: "2s"
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: "10s"

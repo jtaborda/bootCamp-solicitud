@@ -1,8 +1,9 @@
 package co.com.bancolombia.api.exception;
 
 import co.com.bancolombia.model.exception.EstadoSolicitudNotFoundException;
+import co.com.bancolombia.model.exception.TechnicalException;
 import co.com.bancolombia.model.exception.TipoPrestamoNotFoundException;
-import co.com.bancolombia.r2dbc.exception.UserNotFoundException;
+import co.com.bancolombia.model.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,11 +27,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             UserNotFoundException.class,
             TipoPrestamoNotFoundException.class,
-            EstadoSolicitudNotFoundException.class
+            EstadoSolicitudNotFoundException.class,
+            TechnicalException.class
     })
-    public ResponseEntity<Map<String, String>> handleDomainExceptions(RuntimeException ex) {
-        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    public ResponseEntity<Map<String, Object>> handleDomainExceptions(RuntimeException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
+
 
     private ResponseEntity<Map<String, String>> buildErrorResponse(String message, HttpStatus status) {
         Map<String, String> response = new HashMap<>();

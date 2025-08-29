@@ -9,9 +9,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     testImplementation 'org.reactivecommons.utils:object-mapper:0.1.0'
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    implementation files('C:\\Users\\jptaborda\\Desktop\\Curso Aws\\bootCampS1-1.0\\java_reactivo\\infrastructure\\driven-adapters\\r2dbc-postgresql\\build\\libs\\infractura-1.0.0.jar')
-    implementation files('C:\\Users\\jptaborda\\Desktop\\Curso Aws\\bootCampS1-1.0\\java_reactivo\\domain\\model\\build\\libs\\domain-1.0.0.jar')
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
 }

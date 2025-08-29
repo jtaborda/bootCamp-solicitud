@@ -4,6 +4,7 @@ import co.com.bancolombia.model.estadosolicitud.gateways.EstadoSolicitudReposito
 import co.com.bancolombia.model.solicitud.Solicitud;
 import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import co.com.bancolombia.model.tipoprestamo.gateways.TipoPrestamoRepository;
+import co.com.bancolombia.model.usuario.gateways.UsuarioRepository;
 import co.com.bancolombia.r2dbc.entity.solicitudEntity;
 import co.com.bancolombia.model.exception.TipoPrestamoNotFoundException;
 import co.com.bancolombia.r2dbc.exception.UserNotFoundException;
@@ -23,55 +24,51 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
 > implements SolicitudRepository {
 
     private final TransactionalOperator transactionalOperator;
-    private final UserReactiveRepository userReactiveRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
     private final EstadoSolicitudRepository estadoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public SolicitudRepositoryAdapter(SolicitudReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator, UserReactiveRepository usuarioRepository, UserReactiveRepository userReactiveRepository, TipoPrestamoRepository tipoPrestamoRepository,  EstadoSolicitudRepository estadoRepository1) {
+
+    public SolicitudRepositoryAdapter(SolicitudReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator,
+                                      UsuarioRepository usuarioRepository,
+                                      TipoPrestamoRepository tipoPrestamoRepository,  EstadoSolicitudRepository estadoRepository1) {
         super(repository, mapper, entity -> mapper.map(entity, Solicitud.class));
         this.transactionalOperator = transactionalOperator;
-        this.userReactiveRepository = userReactiveRepository;
-        this.tipoPrestamoRepository = tipoPrestamoRepository;
-
+        this.tipoPrestamoRepository=tipoPrestamoRepository;
         this.estadoRepository = estadoRepository1;
+        this.usuarioRepository = usuarioRepository;
     }
-//valdiacion usercase
-    //
+
     @Override
     public Mono<Solicitud> saveSolicitud(Solicitud solicitud) {
-        return tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
-                .switchIfEmpty(Mono.error(new TipoPrestamoNotFoundException("Tipo de Prestamo no encontrado "
-                )))
-                .flatMap(tipo ->
-                        userReactiveRepository.findByDocumento(solicitud.getDocumento())
-                                .switchIfEmpty(Mono.error(new UserNotFoundException(
-                                        "Usuario no encontrado " )))
-                                .flatMap(usuario -> {
-                                    solicitudEntity entity = new solicitudEntity(
-                                            null,
-                                            usuario.getId(),
-                                            solicitud.getMonto(),
-                                            solicitud.getPlazo(),
-                                            solicitud.getTipoPrestamo(),
-                                            1L
-                                    );//
+        return usuarioRepository.getUsuarioPorDocumento(solicitud.getDocumento())
+                .flatMap(usuario -> {
+                    solicitudEntity entity = new solicitudEntity(
+                            null,
+                            usuario.getId(),
+                            solicitud.getMonto(),
+                            solicitud.getPlazo(),
+                            solicitud.getTipoPrestamo(),
+                            1L
+                    );
 
-                                    return repository.save(entity)
-                                            .map(e -> new Solicitud(
-                                                    solicitud.getDocumento(),
-                                                    e.getMonto(),
-                                                    e.getPlazo(),
-                                                    e.getId_tipo_prestamos()
-                                            ));
-                                })
-                );
+                    return repository.save(entity)
+                            .map(e -> new Solicitud(
+                                    solicitud.getDocumento(),
+                                    e.getMonto(),
+                                    e.getPlazo(),
+                                    e.getId_tipo_prestamos()
+                            ));
+                });
     }
+
+
 
     @Override
     public Flux<Solicitud> getAllSolicitud() {
         return repository.findAll()
                 .flatMap(entity ->
-                        userReactiveRepository.findById(entity.getUsuario_id())
+                        usuarioRepository.getUsuarioPorID(entity.getUsuario_id())
                                 .flatMap(user ->
                                         tipoPrestamoRepository.getTipoPrstamo(entity.getId_tipo_prestamos())
                                                 .flatMap(tipo ->
