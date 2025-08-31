@@ -4,6 +4,8 @@ import co.com.bancolombia.api.dto.CreateSolictudDto;
 import co.com.bancolombia.api.dto.PaginaDto;
 import co.com.bancolombia.api.dto.SolicitudDto;
 import co.com.bancolombia.api.mapper.SolicitudDTOMapper;
+import co.com.bancolombia.api.security.JwtUtil;
+import co.com.bancolombia.model.exception.InvalidJwtException;
 import co.com.bancolombia.model.solicitud.Solicitud;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,14 +33,26 @@ public class ApiRest {
 
     private final SolicitudUseCase solicitudUseCase;
     private final SolicitudDTOMapper solicitudDTOMapper;
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "Crear una nueva solicitud")
     @PostMapping
-    public Mono<ResponseEntity<Void>> createSolicitud(@Valid @RequestBody CreateSolictudDto createSolictudDto) {
+    public Mono<ResponseEntity<Void>> createSolicitud(@Valid @RequestBody CreateSolictudDto createSolictudDto,
+    @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long documento = jwtUtil.extractDocumento(token);
+
+        if (createSolictudDto.documento().compareTo(documento) != 0) {
+            return Mono.error(new InvalidJwtException("Usuario solo puede crear solicitud para el mismo"));
+        }
+
         logger.info("Creando Solicitud");
         return solicitudUseCase.saveSolicitud(solicitudDTOMapper.toModel(createSolictudDto))
                 .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()));
     }
+
+
     @Operation(summary = "Obtener Todas las Solicitudes")
     @GetMapping
     public Flux<SolicitudDto> getAllSolicitud() {

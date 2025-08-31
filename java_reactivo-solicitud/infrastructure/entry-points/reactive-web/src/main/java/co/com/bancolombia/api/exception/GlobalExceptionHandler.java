@@ -1,9 +1,6 @@
 package co.com.bancolombia.api.exception;
 
-import co.com.bancolombia.model.exception.EstadoSolicitudNotFoundException;
-import co.com.bancolombia.model.exception.TechnicalException;
-import co.com.bancolombia.model.exception.TipoPrestamoNotFoundException;
-import co.com.bancolombia.model.exception.UserNotFoundException;
+import co.com.bancolombia.model.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,10 +34,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
-
     private ResponseEntity<Map<String, String>> buildErrorResponse(String message, HttpStatus status) {
         Map<String, String> response = new HashMap<>();
         response.put("error", message);
         return ResponseEntity.status(status).body(response);
+    }
+
+    @ExceptionHandler(InvalidJwtException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidJwtException(InvalidJwtException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }
