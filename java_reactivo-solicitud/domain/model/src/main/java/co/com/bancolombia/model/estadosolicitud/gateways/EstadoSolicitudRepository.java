@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 public interface EstadoSolicitudRepository
 {
     Mono<EstadoSolicitud> getEstadoSolicitud(Long Id);
+    Mono<EstadoSolicitud> getEstadoSolicitudxNombre(String nombrbrEstado);
 }

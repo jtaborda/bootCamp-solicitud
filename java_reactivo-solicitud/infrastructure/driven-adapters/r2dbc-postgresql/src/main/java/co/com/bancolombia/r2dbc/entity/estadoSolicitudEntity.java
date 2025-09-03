@@ -1,5 +1,6 @@
 package co.com.bancolombia.r2dbc.entity;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class estadoSolicitudEntity {
     @Id
     private Long id_estado;
-    private String nombre_estado;
+    @Column(name = "nombre_estado")
+    private String nombreEstado;
 }

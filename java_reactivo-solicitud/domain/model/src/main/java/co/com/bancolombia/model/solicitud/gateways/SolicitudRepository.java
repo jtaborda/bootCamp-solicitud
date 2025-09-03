@@ -10,4 +10,5 @@ public interface SolicitudRepository {
     Mono<Solicitud> saveSolicitud(Solicitud solicitud);
     Flux<Solicitud> getAllSolicitud();
     Flux<Solicitud> getFiltros(Long paginado);
+    Mono<Boolean> editSolicitud(Solicitud solicitud);
 }

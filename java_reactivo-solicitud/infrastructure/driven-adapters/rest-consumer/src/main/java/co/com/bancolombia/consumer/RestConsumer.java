@@ -24,7 +24,7 @@ public class RestConsumer implements UsuarioRepository {
                 .uri("http://localhost:8080/api/v1/usuarios/{id}", documento)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
-                        resp -> Mono.error(new UserNotFoundException("Usuario no encontrado")))
+                        resp -> Mono.error(new UserNotFoundException("Usuario no encontrado--")))
                 .onStatus(HttpStatusCode::is5xxServerError,
                         resp -> Mono.error(new TechnicalException("Error técnico en servicio de usuarios")))
                 .bodyToMono(UsuarioResponse.class)
@@ -68,8 +68,5 @@ public class RestConsumer implements UsuarioRepository {
                         .build()
                 );
     }
-
-
-
 
 }

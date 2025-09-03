@@ -15,6 +15,7 @@ public interface SolicitudDTOMapper {
     SolicitudDto toResponse(Solicitud solicitud);
     List<SolicitudDto> toResponseList(List<Solicitud> solicitudes);
     Solicitud toModel(CreateSolictudDto createSolictudDto);
-    Solicitud toDTO(EditSolicitudDto editSolicitudDto);
+    Solicitud toModel(EditSolicitudDto editSolicitudDto);
     Paginado toModel(PaginaDto paginaDto);
+
 }

@@ -1,14 +1,11 @@
 package co.com.bancolombia.r2dbc;
 
 import co.com.bancolombia.model.estadosolicitud.gateways.EstadoSolicitudRepository;
-import co.com.bancolombia.model.paginado.Paginado;
 import co.com.bancolombia.model.solicitud.Solicitud;
 import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import co.com.bancolombia.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.bancolombia.model.usuario.gateways.UsuarioRepository;
 import co.com.bancolombia.r2dbc.entity.solicitudEntity;
-import co.com.bancolombia.model.exception.TipoPrestamoNotFoundException;
-import co.com.bancolombia.r2dbc.exception.UserNotFoundException;
 import co.com.bancolombia.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -85,7 +82,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                                         user.getCorreo(),
                                                         user.getNombre(),
                                                         tipo.getTasa_interes(),
-                                                        user.getSalario()
+                                                        user.getSalario(),entity.getId_solicitud()
                                                 ))
                                 )
                 )
@@ -111,10 +108,28 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                                                         user.getCorreo(),
                                                                         user.getNombre(),
                                                                         tipo.getTasa_interes(),
-                                                                        user.getSalario()
+                                                                        user.getSalario(),entity.getId_solicitud()
                                                                 ))
                                                 )
                                 )
                 );
     }
+
+    @Override
+    public Mono<Boolean> editSolicitud(Solicitud solicitud) {
+        return estadoRepository.getEstadoSolicitudxNombre(solicitud.getNombreEstado())
+                .flatMap(estadoSolicitud ->
+                        repository.findById(solicitud.getIdSolicitud())
+                                .flatMap(solicitudFinal -> {
+                                    solicitudFinal.setIdEstado(estadoSolicitud.getId_estado());
+                                    return repository.save(solicitudFinal);
+                                })
+                )
+                .map(saved -> true)
+                .defaultIfEmpty(false);
+
+    }
+
+
+
 }

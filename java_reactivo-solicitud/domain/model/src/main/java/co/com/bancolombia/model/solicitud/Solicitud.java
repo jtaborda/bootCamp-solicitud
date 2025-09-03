@@ -20,11 +20,14 @@ public class Solicitud
     private String nombre;
     private Long  tasa_interes;
     private Long  salario_base;
-
+    private Long  idSolicitud;
 
    public Solicitud(Long documento, Long monto, Long plazo, Long idTipoPrestamos, String nombreTipo, Long idEstado, String nombreEstado, Object o, String correo, String nombre, Long tasaInteres, Long salario) {
     }
 
     public Solicitud(Long documento, Long monto, Long plazo, Long idTipoPrestamos) {
+    }
+
+    public Solicitud(Long documento, Long idEstado, Long idSolicitud) {
     }
 }

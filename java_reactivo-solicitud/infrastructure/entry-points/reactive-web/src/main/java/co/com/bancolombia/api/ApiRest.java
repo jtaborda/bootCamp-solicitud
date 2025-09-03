@@ -1,14 +1,14 @@
 package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.CreateSolictudDto;
+import co.com.bancolombia.api.dto.EditSolicitudDto;
 import co.com.bancolombia.api.dto.PaginaDto;
 import co.com.bancolombia.api.dto.SolicitudDto;
 import co.com.bancolombia.api.mapper.SolicitudDTOMapper;
-import co.com.bancolombia.model.solicitud.Solicitud;
+import co.com.bancolombia.api.security.JwtUtil;
+import co.com.bancolombia.model.exception.InvalidJwtException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +31,25 @@ public class ApiRest {
 
     private final SolicitudUseCase solicitudUseCase;
     private final SolicitudDTOMapper solicitudDTOMapper;
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "Crear una nueva solicitud")
     @PostMapping
-    public Mono<ResponseEntity<Void>> createSolicitud(@Valid @RequestBody CreateSolictudDto createSolictudDto) {
-        logger.info("Creando Solicitud");
-        return solicitudUseCase.saveSolicitud(solicitudDTOMapper.toModel(createSolictudDto))
-                .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()));
-    }
+        public Mono<ResponseEntity<Void>> createSolicitud(@Valid @RequestBody CreateSolictudDto createSolictudDto,
+                @RequestHeader("Authorization") String authHeader) {
+
+            String token = authHeader.replace("Bearer ", "");
+            Long documento = jwtUtil.extractDocumento(token);
+
+            if (createSolictudDto.documento().compareTo(documento) != 0) {
+                return Mono.error(new InvalidJwtException("Usuario solo puede crear solicitud para el mismo"));
+            }
+
+            logger.info("Creando Solicitud");
+            return solicitudUseCase.saveSolicitud(solicitudDTOMapper.toModel(createSolictudDto))
+                    .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()));
+        }
+
     @Operation(summary = "Obtener Todas las Solicitudes")
     @GetMapping
     public Flux<SolicitudDto> getAllSolicitud() {
@@ -48,7 +59,7 @@ public class ApiRest {
     }
 
 
-
+    @Operation(summary = "Trae las solicitudes filtradas por paginacion y estado")
     @GetMapping("/paginado")
     public Flux<SolicitudDto> getAllSolicitudPaged(@RequestBody PaginaDto paginaDto) {
         logger.info("***************************"); logger.info("Trayendo las solicitudes"); logger.info("*****************************");
@@ -57,5 +68,12 @@ public class ApiRest {
     }
 
 
+    @Operation(summary = "Cambia el estado de una solicitud")
+    @PutMapping()
+    public Mono<ResponseEntity<Void>> EditSolicitud(@RequestBody EditSolicitudDto editSolicitudDto) {
+        logger.info("***************************"); logger.info("Editando estado de una solicitudes"); logger.info("*****************************");
+        return solicitudUseCase.editSolicitud(solicitudDTOMapper.toModel(editSolicitudDto))
+                .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()));
+    }
 
 }

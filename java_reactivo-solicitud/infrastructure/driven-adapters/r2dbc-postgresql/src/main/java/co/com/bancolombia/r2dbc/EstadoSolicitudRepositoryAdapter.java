@@ -32,4 +32,14 @@ public class EstadoSolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                 .switchIfEmpty(Mono.error(new EstadoSolicitudNotFoundException("El estado de solicitud No existe ")))
                 .map(entity -> mapper.map(entity, EstadoSolicitud.class));
     }
+
+
+    @Override
+    public Mono<EstadoSolicitud> getEstadoSolicitudxNombre(String nombreEstado) {
+        return repository.findByNombreEstadoContainsIgnoreCase(nombreEstado.toLowerCase())
+                .switchIfEmpty(Mono.error(new EstadoSolicitudNotFoundException("El estado de solicitud No existe ")))
+                .map(entity -> mapper.map(entity, EstadoSolicitud.class));
+    }
+
+
 }

@@ -1,14 +1,13 @@
 package co.com.bancolombia.api.dto;
 
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record EditSolicitudDto(@NotBlank(message = "El nombre no puede estar vacío")
+public record EditSolicitudDto(@NotBlank(message = "El documento no puede estar vacío")
                                Long documento,
-                               @Min(value = 0, message = "El monto no puede ser menor a 0")
-                               Long monto,
-                               @Min(value = 0, message = "El monto no puede ser menor a 0")
-                               Long plazo,
-                               Long tipoPrestamo) {
+                               @NotNull(message = "El nombreEstado no puede estar vacío")
+                               String nombreEstado,
+                               @NotBlank(message = "El idSolicitud no puede estar vacío")
+                               Long idSolicitud) {
 }
