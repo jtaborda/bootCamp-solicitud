@@ -7,5 +7,4 @@ public interface UsuarioRepository
 {
     Mono<Usuario> getUsuarioPorDocumento(Long documento);
     Mono<Usuario> getUsuarioPorID(Long id);
-
 }

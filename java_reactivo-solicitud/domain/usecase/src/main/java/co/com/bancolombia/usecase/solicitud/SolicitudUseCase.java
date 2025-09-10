@@ -15,6 +15,9 @@ import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.logging.Logger;
+
 @RequiredArgsConstructor
 public class SolicitudUseCase
 {
@@ -24,6 +27,8 @@ public class SolicitudUseCase
     private final UsuarioRepository usuarioRepository;
     private final EstadoSolicitudRepository estadoSolicitudRepository;
     private final MessageGateway messageGateway;
+
+
 
     public Mono<Void> saveSolicitud(Solicitud solicitud) {
     return tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
@@ -77,5 +82,30 @@ public class SolicitudUseCase
                 })
                 .then();
     }
+
+
+    public Mono<String> calcularCapacidadd(Solicitud solicitud) {
+        return usuarioRepository.getUsuarioPorDocumento(solicitud.getDocumento())
+                .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")))
+                .flatMap(usuario ->
+                        tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
+                                .switchIfEmpty(Mono.error(new TipoPrestamoNotFoundException("Tipo de préstamo no encontrado")))
+                                .flatMap(tipoPrestamo ->
+                                        solicitudRepository.getDocumentoEstado(solicitud) // Flux<Solicitud>
+                                                .collectList() // Convertimos Flux a Mono<List<Solicitud>>
+                                                .flatMap(solicitudes -> {
+                                                    if (solicitudes.isEmpty()) {
+                                                        return Mono.error(new RuntimeException("No se encontraron solicitudes para el usuario y estado indicados"));
+                                                    }
+
+                                                    return messageGateway.calcularCapacidadEndeudamiento(solicitudes);
+
+                                                })
+                                )
+                );
+    }
+
+
+
 
 }

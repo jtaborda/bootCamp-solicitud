@@ -66,7 +66,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
     public Flux<Solicitud> getAllSolicitud() {
         return repository.findAll()
                 .flatMap(entity ->
-                        usuarioRepository.getUsuarioPorID(entity.getUsuario_id())
+                        usuarioRepository.getUsuarioPorID(entity.getUsuarioId())
                                 .flatMap(user ->
                                         tipoPrestamoRepository.getTipoPrstamo(entity.getIdTipoPrestamos())
                                                 .flatMap(tipo ->
@@ -78,7 +78,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                                         entity.getIdTipoPrestamos(),
                                                         tipo.getNombre_tipo(),
                                                         estado.getId_estado(),
-                                                        estado.getNombre_estado(),
+                                                        estado.getNombreEstado(),
                                                         user.getCorreo(),
                                                         user.getNombre(),
                                                         tipo.getTasa_interes(),
@@ -88,11 +88,12 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                 )
          );
     }
+
     @Override
     public Flux<Solicitud> getFiltros(Long estadoId) {
         return repository.findByIdEstado(estadoId)
                 .flatMap(entity ->
-                        usuarioRepository.getUsuarioPorID(entity.getUsuario_id())
+                        usuarioRepository.getUsuarioPorID(entity.getUsuarioId())
                                 .flatMap(user ->
                                         tipoPrestamoRepository.getTipoPrstamo(entity.getIdTipoPrestamos())
                                                 .flatMap(tipo ->
@@ -104,7 +105,7 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                                                                         entity.getIdTipoPrestamos(),
                                                                         tipo.getNombre_tipo(),
                                                                         estado.getId_estado(),
-                                                                        estado.getNombre_estado(),
+                                                                        estado.getNombreEstado(),
                                                                         user.getCorreo(),
                                                                         user.getNombre(),
                                                                         tipo.getTasa_interes(),
@@ -129,6 +130,39 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
                 .defaultIfEmpty(false);
 
     }
+
+    @Override
+    public Flux<Solicitud> getDocumentoEstado(Solicitud solicitud) {
+        return usuarioRepository.getUsuarioPorDocumento(solicitud.getDocumento())
+                .flatMapMany(usuario ->
+                        repository.findByIdEstadoAndUsuarioId(2L, usuario.getId())
+                                .flatMap(entity ->
+                                        usuarioRepository.getUsuarioPorID(entity.getUsuarioId())
+                                                .flatMap(user ->
+                                                        tipoPrestamoRepository.getTipoPrstamo(entity.getIdTipoPrestamos())
+                                                                .flatMap(tipo ->
+                                                                        estadoRepository.getEstadoSolicitud(entity.getIdEstado())
+                                                                                .map(estado -> new Solicitud(
+                                                                                        user.getDocumento(),
+                                                                                        entity.getMonto(),
+                                                                                        entity.getPlazo(),
+                                                                                        entity.getIdTipoPrestamos(),
+                                                                                        tipo.getNombre_tipo(),
+                                                                                        estado.getId_estado(),
+                                                                                        estado.getNombreEstado(),
+                                                                                        user.getCorreo(),
+                                                                                        user.getNombre(),
+                                                                                        tipo.getTasa_interes(),
+                                                                                        user.getSalario(),
+                                                                                        entity.getId_solicitud()
+                                                                                ))
+                                                                )
+                                                )
+                                )
+                );
+    }
+
+
 
 
 

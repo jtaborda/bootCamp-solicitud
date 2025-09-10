@@ -5,8 +5,10 @@ import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 
+
 public interface TipoPrestamoReactiveRepository
         extends ReactiveCrudRepository
-        <tipoPrestamoEntity, Long>, ReactiveQueryByExampleExecutor<tipoPrestamoEntity> {
+        <tipoPrestamoEntity, Long>, ReactiveQueryByExampleExecutor<tipoPrestamoEntity>
+        {
 
 }

@@ -13,5 +13,5 @@ import lombok.Setter;
 public class EstadoSolicitud
 {
     private Long id_estado;
-    private String nombre_estado;
+    private String nombreEstado;
 }

@@ -33,4 +33,4 @@ public class TipoPrestamoRepositoryAdapter extends ReactiveAdapterOperations<
                 .map(entity -> mapper.map(entity, TipoPrestamo.class));
     }
 
-}
+    }

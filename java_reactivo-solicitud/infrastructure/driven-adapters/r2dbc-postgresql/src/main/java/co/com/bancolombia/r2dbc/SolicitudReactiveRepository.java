@@ -15,4 +15,5 @@ public interface SolicitudReactiveRepository
 
     Flux<solicitudEntity> findByIdTipoPrestamos(Long tipoPrestamo);
     Flux<solicitudEntity> findByIdEstado(Long estadoId);
+    Flux<solicitudEntity> findByIdEstadoAndUsuarioId(Long estadoId, long idDocument);
 }

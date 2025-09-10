@@ -1,6 +1,5 @@
 package co.com.bancolombia.model.solicitud.gateways;
 
-import co.com.bancolombia.model.paginado.Paginado;
 import co.com.bancolombia.model.solicitud.Solicitud;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -11,4 +10,5 @@ public interface SolicitudRepository {
     Flux<Solicitud> getAllSolicitud();
     Flux<Solicitud> getFiltros(Long paginado);
     Mono<Boolean> editSolicitud(Solicitud solicitud);
+    Flux<Solicitud> getDocumentoEstado(Solicitud solicitud);
 }

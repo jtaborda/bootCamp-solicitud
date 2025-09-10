@@ -1,5 +1,6 @@
 package co.com.bancolombia.r2dbc.entity;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class tipoPrestamoEntity {
     @Id
     private Long id_tipo_prestamos;
-    private String nombre_tipo ;
+    private String nombre_tipo;
     private Long monto_minimo;
     private Long monto_maximo;
     private Long tasa_interes;

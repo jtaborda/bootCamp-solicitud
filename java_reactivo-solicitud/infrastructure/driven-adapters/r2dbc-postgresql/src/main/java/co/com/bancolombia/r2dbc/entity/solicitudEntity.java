@@ -16,7 +16,8 @@ import org.springframework.data.relational.core.mapping.Table;
 public class solicitudEntity {
     @Id
     private Long id_solicitud;
-    private Long usuario_id ;
+    @Column(name = "usuario_id")
+    private Long usuarioId ;
     private Long monto ;
     private Long plazo ;
     @Column(name = "id_tipo_prestamos")
