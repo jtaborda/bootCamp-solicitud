@@ -1,0 +1,7 @@
+FROM eclipse-temurin:21-jdk-alpine
+VOLUME /tmp
+COPY *.jar JavaReactivo.jar
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+EXPOSE 9090
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar JavaReactivo.jar" ]

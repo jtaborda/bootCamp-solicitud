@@ -21,7 +21,7 @@ public class RestConsumer implements UsuarioRepository {
     public Mono<Usuario> getUsuarioPorDocumento(Long documento) {
         return client
                 .get()
-                .uri("http://localhost:8080/api/v1/usuarios/{id}", documento)
+                .uri("http://backendAutenticacion:8080/api/v1/usuarios/{id}", documento)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
                         resp -> Mono.error(new UserNotFoundException("Usuario no encontrado--")))
@@ -50,7 +50,7 @@ public class RestConsumer implements UsuarioRepository {
     public Mono<Usuario> getUsuarioPorID(Long id) {
         return client
                 .get()
-                .uri("http://localhost:8080/api/v1/usuarios/id/{id}", id)
+                .uri("http://backendAutenticacion:8080/api/v1/usuarios/id/{id}", id)
                 .retrieve()
                 .bodyToMono(UsuarioResponse.class)
                 .map(dto -> Usuario.builder()

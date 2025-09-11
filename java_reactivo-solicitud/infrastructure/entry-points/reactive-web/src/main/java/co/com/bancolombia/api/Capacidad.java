@@ -1,7 +1,6 @@
 package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.CapacidadPagoDto;
-import co.com.bancolombia.api.dto.CreateSolictudDto;
 import co.com.bancolombia.api.mapper.SolicitudDTOMapper;
 import co.com.bancolombia.usecase.solicitud.SolicitudUseCase;
 import io.swagger.v3.oas.annotations.Operation;
