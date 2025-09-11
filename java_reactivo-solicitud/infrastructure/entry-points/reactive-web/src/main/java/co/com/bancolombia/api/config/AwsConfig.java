@@ -15,7 +15,7 @@ public class AwsConfig {
         return SqsAsyncClient.builder()
                 .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("AKIAUQMNCBVPZI3PFRPV", "N4PP/ikzwqNZDcMvUhCtVMsQkyERjDL9Gy5mpNwj")))
+                        
                 .build();
     }
 }
