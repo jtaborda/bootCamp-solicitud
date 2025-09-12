@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+
 
 @Repository
 public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
@@ -26,15 +28,20 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<
     private final EstadoSolicitudRepository estadoRepository;
     private final UsuarioRepository usuarioRepository;
 
+    private final DynamoDbClient dynamoDbClient;
+
+
+
 
     public SolicitudRepositoryAdapter(SolicitudReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator,
                                       UsuarioRepository usuarioRepository,
-                                      TipoPrestamoRepository tipoPrestamoRepository,  EstadoSolicitudRepository estadoRepository1) {
+                                      TipoPrestamoRepository tipoPrestamoRepository,  EstadoSolicitudRepository estadoRepository1,DynamoDbClient dynamoDbClient) {
         super(repository, mapper, entity -> mapper.map(entity, Solicitud.class));
         this.transactionalOperator = transactionalOperator;
         this.tipoPrestamoRepository=tipoPrestamoRepository;
         this.estadoRepository = estadoRepository1;
         this.usuarioRepository = usuarioRepository;
+        this.dynamoDbClient = dynamoDbClient;
     }
 
     @Override

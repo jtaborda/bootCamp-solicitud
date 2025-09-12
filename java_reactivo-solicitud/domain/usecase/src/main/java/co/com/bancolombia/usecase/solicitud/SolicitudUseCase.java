@@ -15,9 +15,6 @@ import co.com.bancolombia.model.solicitud.gateways.SolicitudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 @RequiredArgsConstructor
 public class SolicitudUseCase
 {
@@ -68,18 +65,24 @@ public class SolicitudUseCase
     public Mono<Void> editSolicitud(Solicitud solicitud) {
         return estadoSolicitudRepository.getEstadoSolicitudxNombre(solicitud.getNombreEstado())
                 .switchIfEmpty(Mono.error(new EstadoSolicitudNotFoundException("Estado no encontrado")))
-                .flatMap(tipo ->
-                        usuarioRepository.getUsuarioPorDocumento(solicitud.getDocumento())
-                                .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")))
-                )
-                .then(solicitudRepository.editSolicitud(solicitud))
-                .flatMap(saved -> {
-                    if (Boolean.TRUE.equals(saved)) {
+                .flatMap(tipo -> usuarioRepository.getUsuarioPorDocumento(solicitud.getDocumento())
+                        .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado"))))
+                .flatMap(usuario -> solicitudRepository.findById(solicitud.getIdSolicitud())
+                        .flatMap(soliFinal -> solicitudRepository.editSolicitud(solicitud)
+                                .flatMap(saved -> {
+                                    if (Boolean.TRUE.equals(saved)) {
+                                        Mono<Void> acciones = messageGateway.send(solicitud);
+                                        soliFinal.setIdSolicitud(solicitud.getIdSolicitud());
+                                        if ("Aprobado".equalsIgnoreCase(solicitud.getNombreEstado())) {
+                                            acciones = acciones.then(messageGateway.sendUpdate(soliFinal));
+                                        }
 
-                        return messageGateway.send(solicitud);
-                    }
-                    return Mono.empty();
-                })
+                                        return acciones;
+                                    }
+                                    return Mono.empty();
+                                })
+                        )
+                )
                 .then();
     }
 
@@ -91,8 +94,8 @@ public class SolicitudUseCase
                         tipoPrestamoRepository.getTipoPrstamo(solicitud.getTipoPrestamo())
                                 .switchIfEmpty(Mono.error(new TipoPrestamoNotFoundException("Tipo de préstamo no encontrado")))
                                 .flatMap(tipoPrestamo ->
-                                        solicitudRepository.getDocumentoEstado(solicitud) // Flux<Solicitud>
-                                                .collectList() // Convertimos Flux a Mono<List<Solicitud>>
+                                        solicitudRepository.getDocumentoEstado(solicitud)
+                                                .collectList()
                                                 .flatMap(solicitudes -> {
                                                     if (solicitudes.isEmpty()) {
                                                         return Mono.error(new RuntimeException("No se encontraron solicitudes para el usuario y estado indicados"));
@@ -104,8 +107,4 @@ public class SolicitudUseCase
                                 )
                 );
     }
-
-
-
-
 }
